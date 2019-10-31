@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mochilas</title>
+    <link rel="icon" sizes="32x32" href="favicon.ico">
+    <meta name="theme-color" content="#ffcb2d">
+    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="estilos.css">
+    <script type="module" src="lib/registraServiceWorker.js"></script>
+    <script src="lib/polycustom.js"></script>
+    <script type="module" src="mi-footer.js"></script>
+  </head>
+  <body>
+    <form id="vista">
+      <header>
+        <a href="index.html">Cancelar</a>
+        <button type="submit">Guardar</button>
+        <button id="eliminar" type="button">Eliminar</button>
+        <h1><output id="título"><progress max="100">Cargando…</progress></h1>
+      </header>
+      <p><input id="marca" type="text" placeholder="Marca" required></p>
+      <p><input id="color" type="text" placeholder="Color" required></p>
+      <p><input id="tamano" type="text" placeholder="Tamaño" required></p>
+      <footer is="mi-footer"></footer>
+    </form>
+    <script src="/__/firebase/7.2.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.2.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <script type="module">
+      import { error } from "./lib/util.js";
+      const parametros = new URLSearchParams(location.search);
+      const id = parametros.get("id");
+      const firestore = firebase.firestore();
+      firestore.enablePersistence()
+        .catch(error)
+        .then(busca);
+      async function busca() {
+        try {
+          const doc = await firestore.collection("MOCHILAS").doc(id).get();
+          if (doc.exists) {
+            const mfmodelo = doc.data();
+            document.title = mfmodelo.MOCHI_MARCA + mfmodelo.MOCHI_COLOR + mfmodelo.MOCHI_TAMANO;
+            título.value = mfmodelo.MOCHI_MARCA + mfmodelo.MOCHI_COLOR + mfmodelo.MOCHI_TAMANO;
+            marca.value = mfmodelo.MOCHI_MARCA;
+            color.value = mfmodelo.MOCHI_COLOR;
+            tamano.value = mfmodelo.MOCHI_TAMANO;
+            vista.addEventListener("submit", guarda);
+            eliminar.addEventListener("click", elimina);
+          } else {
+            alert("Mochila no encontrada");
+          }
+        } catch (e) {
+          error(e)
+        }
+      }
+      async function guarda(evt) {
+        try {
+          evt.preventDefault();
+          const MOCHI_MARCA = marca.value.trim();
+          const MOCHI_COLOR = color.value.trim();
+          const MOCHI_TAMANO = tamano.value.trim();
+          const mfmodelo = { MOCHI_MARCA, MOCHI_COLOR, MOCHI_TAMANO };
+          await firestore.collection("MOCHILAS").doc(id).set(mfmodelo);
+          document.location = "index.html";
+        } catch (e) {
+          error(e)
+        }
+      }
+      async function elimina() {
+        try {
+          await firestore.collection("MOCHILAS").doc(id).delete();
+          document.location = "index.html";
+        } catch (e) {
+          error(e)
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Generos de Musica</title>
+    <title>Mochilas</title>
  
     <!-- Ícono para la página web. -->
     <link rel="icon" sizes="32x32" href="favicon.ico">
@@ -34,8 +34,8 @@
   </head>
   <body>
     <header>
-      <a href="generoNuevo.html">Agregar&hellip;</a>
-      <h1>Generos de Musica</h1>
+      <a href="mochilaNueva.html">Agregar mochila&hellip;</a>
+      <h1>Mochilas</h1>
     </header>
     <ul id="ul">
       <li><progress max="100">Cargando…</progress></li>
@@ -51,16 +51,17 @@
         .catch(error)
         .then(consulta);
       function consulta() {
-        firebase.firestore().collection("MUSICA").onSnapshot(
+        firebase.firestore().collection("MOCHILAS").onSnapshot(
           querySnapshot => {
             ul.innerHTML = "";
             querySnapshot.forEach(doc => {
               const mfmodelo = doc.data();
               ul.innerHTML += /*html*/
                 `<li>
-                  <a href="genero.html?id=${url(doc.id)}">
-                    ${cod(mfmodelo.MUSIC_NOMBRE)}
-                    ${cod(mfmodelo.MUSIC_ARTISTA)}
+                  <a href="mochila.html?id=${url(doc.id)}">
+                    ${cod(mfmodelo.MOCHI_MARCA)}
+                    ${cod(mfmodelo.MOCHI_COLOR)}
+                    ${cod(mfmodelo.MOCHI_TAMANO)}
                   </a>
                 </li>`;
             });
